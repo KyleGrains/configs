@@ -1,0 +1,15 @@
+set number
+filetype on
+syntax on
+set autoindent
+set cindent
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set smarttab
+set expandtab
+set cursorline
+set hlsearch
+set completeopt=preview,menu
+set tags=./tags,tags;$HOME
+set autochdir
