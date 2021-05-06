@@ -12,8 +12,8 @@ pr_mask(const char *str)
 		err_ret("sigprocmask error");
 	} else {
 		printf("%s", str);
-		if (sigismember(&sigset, SIGINT))
-			printf(" SIGINT");
+		if (sigismember(&sigset, SIGUSR1))
+			printf(" SIGUSR1");
 		if (sigismember(&sigset, SIGQUIT))
 			printf(" SIGQUIT");
 		if (sigismember(&sigset, SIGUSR1))
@@ -27,4 +27,29 @@ pr_mask(const char *str)
 	}
 
 	errno = errno_save;		/* restore errno */
+}
+
+
+void pr_mask_test(const char *str)
+{
+	sigset_t sigset;
+	int errno_save;
+	errno_save = errno;
+	if (sigprocmask(0, NULL, &sigset) < 0) {
+		err_ret("sigprocmask error");
+	} else {
+		printf("%s", str);
+		if (sigismember(&sigset, SIGINT))
+			printf(" SIGINT");
+		if (sigismember(&sigset, SIGQUIT))
+			printf(" SIGQUIt");
+		if (sigismember(&sigset, SIGUSR1))
+			printf(" SIGUSR1");
+		if (sigismember(&sigset, SIGALRM))
+			printf(" SIGALRM");
+
+		printf("\n");
+	}
+
+	errno = errno_save;
 }

@@ -1,8 +1,8 @@
 ROOT=..
 PLATFORM=$(shell $(ROOT)/systype.sh)
 include $(ROOT)/Make.defines.$(PLATFORM)
-PROGS = sigusr reenter
-MOREPROGS = systest2 tsleep2 read1 read2
+PROGS = critical sigusr reenter read1 read2
+MOREPROGS = systest2 tsleep2 
 
 all:	$(PROGS) $(MOREPROGS) sleep1.o sleep2.o 
 $(PROGS): $(LIBAPUE)
