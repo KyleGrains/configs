@@ -4,7 +4,7 @@ include $(ROOT)/Make.defines.$(PLATFORM)
 PROGS = critical sigusr reenter read1 read2
 MOREPROGS = systest2 tsleep2 
 
-all:	$(PROGS) $(MOREPROGS) sleep1.o sleep2.o 
+all:	$(PROGS) $(MOREPROGS) sleep1.o sleep2.o  child
 $(PROGS): $(LIBAPUE)
 	$(CC) $(CFLAGS) $@.c -o $@ $(LDFLAGS) $(LDLIBS)
 
