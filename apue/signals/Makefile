@@ -1,7 +1,7 @@
 ROOT=..
 PLATFORM=$(shell $(ROOT)/systype.sh)
 include $(ROOT)/Make.defines.$(PLATFORM)
-PROGS = critical sigusr reenter read1 read2
+PROGS = critical mask sigusr reenter read1 read2 suspend1 suspend2
 MOREPROGS = systest2 tsleep2 
 
 all:	$(PROGS) $(MOREPROGS) sleep1.o sleep2.o  child
