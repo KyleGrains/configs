@@ -12,3 +12,4 @@ set hlsearch
 set completeopt=preview,menu
 set tags=./tags,tags;$HOME
 set autochdir
+#
