@@ -1,13 +1,24 @@
 " LanguageClient-neovim
+" source % after change
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'preservim/nerdtree'
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
+Plug 'jiangmiao/auto-pairs'
+
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
 Plug 'sbdchd/neoformat'
 
 Plug 'cdelledonne/vim-cmake'
 Plug 'antoinemadec/FixCursorHold.nvim'
+
+Plug 'voldikss/vim-floaterm'
 call plug#end()
 
 "Syntax config
@@ -47,6 +58,9 @@ imap <c-s> <Esc>:w<CR>a
 
 "fzf config
 nnoremap <C-p> :Files <Cr>
+
+"Floaterm config
+nnoremap   <C-n> :FloatermNew<CR>
 
 "vim-cmake config
 let g:cmake_link_compile_commands = 1
