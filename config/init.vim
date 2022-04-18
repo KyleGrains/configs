@@ -1,14 +1,20 @@
 " LanguageClient-neovim
 " source % after change
 call plug#begin('~/.local/share/nvim/plugged')
+"Plug 'tomasr/molokai'
 Plug 'preservim/nerdtree'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 Plug 'jiangmiao/auto-pairs'
+
+Plug 'tpope/vim-fugitive'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -19,6 +25,8 @@ Plug 'cdelledonne/vim-cmake'
 Plug 'antoinemadec/FixCursorHold.nvim'
 
 Plug 'voldikss/vim-floaterm'
+
+"Plug 'octol/vim-cpp-enhanced-highlight'
 call plug#end()
 
 "Syntax config
