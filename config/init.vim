@@ -1,35 +1,50 @@
 " LanguageClient-neovim
 " source % after change
 call plug#begin('~/.local/share/nvim/plugged')
-"Plug 'tomasr/molokai'
+" Vim themes
+Plug 'tomasr/molokai'
+" Plug 'tomasiser/vim-code-dark'
+
+" NERDTree ctrl-t
 Plug 'preservim/nerdtree'
 
+" CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+"Airline status bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+" Snippets, using 'main' only now basically
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
+" auto pair
 Plug 'jiangmiao/auto-pairs'
 
+" Git
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
+" fuzzy finder ctrl-p
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" NeoFormat
 Plug 'sbdchd/neoformat'
 
+" CMake
 Plug 'cdelledonne/vim-cmake'
 Plug 'antoinemadec/FixCursorHold.nvim'
 
+" floaterm ctrl-n
 Plug 'voldikss/vim-floaterm'
 
-"Plug 'octol/vim-cpp-enhanced-highlight'
+" cpp syntax highlight
+Plug 'octol/vim-cpp-enhanced-highlight'
 call plug#end()
 
-"Syntax config
+" Syntax config
 set number
 filetype on
 syntax on
@@ -46,37 +61,38 @@ set completeopt=preview,menu
 set tags=./tags,tags;$HOME
 set autochdir
 
-"Fold config
+" Fold config
 set foldmethod=syntax
 set nofoldenable
 set foldlevel=99
 
-"Move between windows bindings
+" Move between windows bindings
 nnoremap <c-j> <c-w>j
 nnoremap <c-h> <c-w>h
 nnoremap <c-k> <c-w>k
 nnoremap <c-l> <c-w>l
 
-"NERDTree
-nmap <c-t> :NERDTree<cr>
+" NERDTree
+nmap <c-t> :NERDTreeToggle<cr>
 
 " Save on Ctrl-S
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>a
 
-"fzf config
+" fzf config
 nnoremap <C-p> :Files <Cr>
 
-"Floaterm config
+" Floaterm config
 nnoremap   <C-n> :FloatermNew<CR>
 
-"vim-cmake config
+" vim-cmake config
+" set CMAKE_EXPORT_COMPILE_COMMANDS
 let g:cmake_link_compile_commands = 1
 nmap <leader>cg :CMakeGenerate<cr>
 nmap <leader>cb :CMakeBuild<cr>
 
 "Coc config
-hi CocFloating ctermbg=White
+"hi CocFloating ctermbg=White
 
 let mapleader = ","
 
