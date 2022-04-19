@@ -11,6 +11,9 @@ Plug 'preservim/nerdtree'
 " CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+" vista
+Plug 'liuchengxu/vista.vim'
+
 "Airline status bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -75,6 +78,15 @@ nnoremap <c-l> <c-w>l
 " NERDTree
 nmap <c-t> :NERDTreeToggle<cr>
 
+let mapleader = ","
+
+" Vista
+let g:vista#renderer#enable_icon = 0 
+let g:vista_sidebar_position = "vertical topleft"
+let g:vista_default_executive = 'coc'
+let g:vista_finder_alternative_executives = 'ctags'
+nmap <leader>v :Vista focus<cr>
+
 " Save on Ctrl-S
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>a
@@ -94,7 +106,6 @@ nmap <leader>cb :CMakeBuild<cr>
 "Coc config
 "hi CocFloating ctermbg=White
 
-let mapleader = ","
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
