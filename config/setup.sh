@@ -3,6 +3,9 @@ sudo apt install python3-pip
 sudo apt install git
 #sudo apt install gcc
 
+git config --global user.email "kyle.grains@gmail.com"
+git config --global user.name "Kyle"
+
 #install nvim
 wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
 sudo apt install ./nvim-linux64.deb
@@ -11,6 +14,7 @@ sudo pip3 install --upgrade pynvim
 
 #for coc nvim
 sudo apt install -y nodejs
+sudo apt install -y npm
 
 #install PlugInstall
 mkdir -p $HOME/.local/share/nvim/site/autoload
@@ -28,7 +32,8 @@ pip3 install cppman
 
 sudo ln -s /usr/bin/nvim /usr/bin/vim
 
+
 #snap install cmake --channel=latest/stable --classic
-#sudo pip3 install --upgrade pynvim
-#git config --global user.email "kyle.grains@gmail.com"
-#git config --global user.name "Kyle"
+#pip3 install conan
+#conan profile new default --detect
+#conan profile update settings.compiler.libcxx=libstdc++11 default
