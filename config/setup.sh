@@ -1,3 +1,4 @@
+#sudo cat "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
 sudo apt install curl
 sudo apt install python3-pip
 sudo apt install git
@@ -17,9 +18,9 @@ sudo apt install -y nodejs
 sudo apt install -y npm
 
 #install PlugInstall
-mkdir -p $HOME/.local/share/nvim/site/autoload
-cp ./plug.vim $HOME/.local/share/nvim/site/autoload
-#sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+#mkdir -p $HOME/.local/share/nvim/site/autoload
+#cp ./plug.vim $HOME/.local/share/nvim/site/autoload
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 mkdir ~/.config/nvim/
 cp init.vim ~/.config/nvim/
 
@@ -37,3 +38,9 @@ sudo ln -s /usr/bin/nvim /usr/bin/vim
 #pip3 install conan
 #conan profile new default --detect
 #conan profile update settings.compiler.libcxx=libstdc++11 default
+
+#sudo apt install cppcheck clang-tidy ccache
+
+#:CocConfig
+#:CocInstall coc-marketplace
+#:CocInstall coc-cmake

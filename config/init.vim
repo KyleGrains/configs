@@ -44,7 +44,7 @@ Plug 'antoinemadec/FixCursorHold.nvim'
 Plug 'voldikss/vim-floaterm'
 
 " cpp syntax highlight
-Plug 'octol/vim-cpp-enhanced-highlight'
+"Plug 'octol/vim-cpp-enhanced-highlight'
 call plug#end()
 
 " Syntax config
@@ -62,7 +62,7 @@ set cursorline
 set hlsearch
 set completeopt=preview,menu
 set tags=./tags,tags;$HOME
-set autochdir
+" set autochdir
 
 " Fold config
 set foldmethod=syntax
@@ -85,7 +85,7 @@ let g:vista#renderer#enable_icon = 0
 let g:vista_sidebar_position = "vertical topleft"
 let g:vista_default_executive = 'coc'
 let g:vista_finder_alternative_executives = 'ctags'
-nmap <leader>v :Vista focus<cr>
+nmap <leader>v :Vista toggle<cr>
 
 " Save on Ctrl-S
 nmap <c-s> :w<CR>
