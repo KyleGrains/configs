@@ -2,7 +2,8 @@
 " source % after change
 call plug#begin('~/.local/share/nvim/plugged')
 " Vim themes
-Plug 'tomasr/molokai'
+ Plug 'tomasr/molokai'
+" Plug 'joshdick/onedark.vim'
 " Plug 'tomasiser/vim-code-dark'
 
 " NERDTree ctrl-t
@@ -14,7 +15,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " vista
 Plug 'liuchengxu/vista.vim'
 
-"Airline status bar
+" Airline status bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
@@ -24,6 +25,9 @@ Plug 'honza/vim-snippets'
 
 " auto pair
 Plug 'jiangmiao/auto-pairs'
+
+" Surround
+Plug 'tpope/vim-surround'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -43,9 +47,32 @@ Plug 'antoinemadec/FixCursorHold.nvim'
 " floaterm ctrl-n
 Plug 'voldikss/vim-floaterm'
 
+" Syntastic
+Plug 'vim-syntastic/syntastic'
+
 " cpp syntax highlight
-"Plug 'octol/vim-cpp-enhanced-highlight'
+" Plug 'octol/vim-cpp-enhanced-highlight'
+
+" Markdown
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown' 
+
+" Repeat
+Plug 'tpope/vim-repeat'
+
+" Indent
+Plug 'yggdroot/indentline'
+" Plug 'nathanaelkane/vim-indent-guides'
+
+" Multi-cursor
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+
+" EasyMotion
+Plug 'easymotion/vim-easymotion'
 call plug#end()
+
+" vim-dispatch
+Plug 'tpope/vim-dispatch'
 
 " Syntax config
 set number
@@ -68,6 +95,8 @@ set tags=./tags,tags;$HOME
 set foldmethod=syntax
 set nofoldenable
 set foldlevel=99
+
+colorscheme molokai
 
 " Move between windows bindings
 nnoremap <c-j> <c-w>j
@@ -241,8 +270,8 @@ endif
 
 " Use CTRL-S for selections ranges.
 " Requires 'textDocument/selectionRange' support of language server.
-"nmap <silent> <C-s> <Plug>(coc-range-select)
-"xmap <silent> <C-s> <Plug>(coc-range-select)
+" nmap <silent> <C-s> <Plug>(coc-range-select)
+" xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocActionAsync('format')
@@ -275,3 +304,16 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+"Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_cpp_checkers = ['gcc', 'cppcheck']
+" let g:syntastic_cpp_checkers = ['gcc', 'cppcheck', 'clang_tidy']
