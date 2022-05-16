@@ -8,8 +8,8 @@ git config --global user.email "kyle.grains@gmail.com"
 git config --global user.name "Kyle"
 
 #install nvim
-wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
-sudo apt install ./nvim-linux64.deb
+#wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
+#sudo apt install ./nvim-linux64.deb
 
 sudo apt install -y python3-pip
 sudo pip3 install --upgrade pynvim
@@ -37,11 +37,13 @@ sudo ln -s /usr/bin/nvim /usr/bin/vim
 
 #snap install cmake --channel=latest/stable --classic
 #pip3 install conan
+#source ~/.profile
 #conan profile new default --detect
 #conan profile update settings.compiler.libcxx=libstdc++11 default
 
 #sudo apt install cppcheck clang-tidy ccache
 
+#:PlugInstall
 #:CocConfig
 #:CocInstall coc-marketplace
 #:CocInstall coc-cmake
