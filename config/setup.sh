@@ -11,6 +11,7 @@ git config --global user.name "Kyle"
 wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
 sudo apt install ./nvim-linux64.deb
 
+sudo apt install -y python3-pip
 sudo pip3 install --upgrade pynvim
 
 #for coc nvim
