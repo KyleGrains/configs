@@ -2,7 +2,7 @@
 " source % after change
 call plug#begin('~/.local/share/nvim/plugged')
 " Vim themes
- Plug 'tomasr/molokai'
+Plug 'tomasr/molokai'
 " Plug 'joshdick/onedark.vim'
 " Plug 'tomasiser/vim-code-dark'
 
@@ -21,7 +21,7 @@ Plug 'vim-airline/vim-airline-themes'
 
 " Snippets, using 'main' only now basically
 Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+Plug 'KyleGrains/vim-snippets'
 
 " auto pair
 Plug 'jiangmiao/auto-pairs'
@@ -51,7 +51,7 @@ Plug 'voldikss/vim-floaterm'
 Plug 'vim-syntastic/syntastic'
 
 " cpp syntax highlight
-" Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'octol/vim-cpp-enhanced-highlight'
 
 " Markdown
 Plug 'godlygeek/tabular'
@@ -65,14 +65,19 @@ Plug 'yggdroot/indentline'
 " Plug 'nathanaelkane/vim-indent-guides'
 
 " Multi-cursor
-Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+"Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 
 " EasyMotion
-Plug 'easymotion/vim-easymotion'
-call plug#end()
+"Plug 'easymotion/vim-easymotion'
 
 " vim-dispatch
-Plug 'tpope/vim-dispatch'
+"Plug 'tpope/vim-dispatch'
+
+"Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
+Plug 'ryanoasis/vim-devicons' "Icons without colours
+Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
+call plug#end()
+
 
 " Syntax config
 set number
@@ -110,7 +115,7 @@ nmap <c-t> :NERDTreeToggle<cr>
 let mapleader = ","
 
 " Vista
-let g:vista#renderer#enable_icon = 0 
+let g:vista#renderer#enable_icon = 1 
 let g:vista_sidebar_position = "vertical topleft"
 let g:vista_default_executive = 'coc'
 let g:vista_finder_alternative_executives = 'ctags'
@@ -287,6 +292,8 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
+let g:airline_powerline_fonts = 1
+
 " Mappings for CoCList
 " Show all diagnostics.
 nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
@@ -299,9 +306,9 @@ nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+"nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+"nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
@@ -312,8 +319,17 @@ set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_aggregate_errors = 1
-let g:syntastic_cpp_checkers = ['gcc', 'cppcheck']
+let g:syntastic_cpp_checkers = ['gcc']
 " let g:syntastic_cpp_checkers = ['gcc', 'cppcheck', 'clang_tidy']
+
+set termguicolors
+lua << EOF
+require("bufferline").setup{}
+EOF
+
+nnoremap <nowait> <C-j> :BufferLineCyclePrev<CR>
+nnoremap <nowait> <C-k> :BufferLineCycleNext<CR>
+nnoremap <nowait> <C-k> :BufferLineCycleNext<CR>
