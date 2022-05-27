@@ -47,3 +47,6 @@ sudo ln -s /usr/bin/nvim /usr/bin/vim
 #:CocConfig
 #:CocInstall coc-marketplace
 #:CocInstall coc-cmake
+
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
