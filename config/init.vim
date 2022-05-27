@@ -48,7 +48,7 @@ Plug 'antoinemadec/FixCursorHold.nvim'
 Plug 'voldikss/vim-floaterm'
 
 " Syntastic
-Plug 'vim-syntastic/syntastic'
+"Plug 'vim-syntastic/syntastic'
 
 " cpp syntax highlight
 Plug 'octol/vim-cpp-enhanced-highlight'
@@ -76,8 +76,19 @@ Plug 'yggdroot/indentline'
 "Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
 Plug 'ryanoasis/vim-devicons' "Icons without colours
 Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
+
+" Start page
+Plug 'mhinz/vim-startify'
+Plug 'folke/which-key.nvim'
+
+" Nerd commenter
+Plug 'scrooloose/nerdcommenter'
+
+" Matchup
+Plug 'andymass/vim-matchup'
 call plug#end()
 
+let g:loaded_matchit = 1
 
 " Syntax config
 set number
@@ -204,6 +215,7 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gs :call CocAction('jumpDefinition', 'split')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -313,23 +325,25 @@ nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 "Syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_cpp_checkers = ['gcc']
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 0
+"let g:syntastic_check_on_wq = 0
+"let g:syntastic_aggregate_errors = 1
+"let g:syntastic_cpp_checkers = ['gcc']
 " let g:syntastic_cpp_checkers = ['gcc', 'cppcheck', 'clang_tidy']
 
-set termguicolors
-lua << EOF
-require("bufferline").setup{}
-EOF
+nnoremap <nowait> <space>j :BufferLineCycleNext<CR>
+nnoremap <nowait> <space>k :BufferLineCyclePrev<CR>
 
-nnoremap <nowait> <C-j> :BufferLineCyclePrev<CR>
-nnoremap <nowait> <C-k> :BufferLineCycleNext<CR>
-nnoremap <nowait> <C-k> :BufferLineCycleNext<CR>
+" nerd commenter
+"filetype plugin on
+let g:NERDCreateDefaultMappings = 1
+
+hi MatchParenCur cterm=bold
+hi MatchParen ctermbg=green
+"hi MatchWordCur cterm=underline
