@@ -220,6 +220,39 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
+" bases
+nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>
+" bases of up to 3 levels
+nn <silent> xB :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
+" derived
+nn <silent> xd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
+" derived of up to 3 levels
+nn <silent> xD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
+
+" caller
+nn <silent> xc :call CocLocations('ccls','$ccls/call')<cr>
+" callee
+nn <silent> xC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+
+" $ccls/member
+" member variables / variables in a namespace
+nn <silent> xm :call CocLocations('ccls','$ccls/member')<cr>
+" member functions / functions in a namespace
+nn <silent> xf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
+" nested classes / types in a namespace
+nn <silent> xs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
+
+nmap <silent> xt <Plug>(coc-type-definition)<cr>
+nn <silent> xv :call CocLocations('ccls','$ccls/vars')<cr>
+nn <silent> xV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
+
+nn xx x
+
+nn <silent><buffer> xj :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})<cr>
+nn <silent><buffer> xh :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})<cr>
+nn <silent><buffer> xl :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>
+nn <silent><buffer> xk :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>
+
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -337,8 +370,24 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 "let g:syntastic_cpp_checkers = ['gcc']
 " let g:syntastic_cpp_checkers = ['gcc', 'cppcheck', 'clang_tidy']
 
+" BufferLine
+" In your init.lua or init.vim
+set termguicolors
+lua << EOF
+require("bufferline").setup{}
+EOF
 nnoremap <nowait> <space>j :BufferLineCycleNext<CR>
 nnoremap <nowait> <space>k :BufferLineCyclePrev<CR>
+nnoremap <silent> gb :BufferLinePick<CR>
+nnoremap <silent> <space>1 <Cmd>BufferLineGoToBuffer 1<CR>
+nnoremap <silent> <space>2 <Cmd>BufferLineGoToBuffer 2<CR>
+nnoremap <silent> <space>3 <Cmd>BufferLineGoToBuffer 3<CR>
+nnoremap <silent> <space>4 <Cmd>BufferLineGoToBuffer 4<CR>
+nnoremap <silent> <space>5 <Cmd>BufferLineGoToBuffer 5<CR>
+nnoremap <silent> <space>6 <Cmd>BufferLineGoToBuffer 6<CR>
+nnoremap <silent> <space>7 <Cmd>BufferLineGoToBuffer 7<CR>
+nnoremap <silent> <space>8 <Cmd>BufferLineGoToBuffer 8<CR>
+nnoremap <silent> <space>9 <Cmd>BufferLineGoToBuffer 9<CR>
 
 " nerd commenter
 "filetype plugin on
@@ -347,3 +396,6 @@ let g:NERDCreateDefaultMappings = 1
 hi MatchParenCur cterm=bold
 hi MatchParen ctermbg=green
 "hi MatchWordCur cterm=underline
+"
+
+"se mouse=a
