@@ -85,7 +85,22 @@ Plug 'folke/which-key.nvim'
 Plug 'scrooloose/nerdcommenter'
 
 " Matchup
-Plug 'andymass/vim-matchup'
+Plug 'andymass/vim-matchup' 
+
+" CtrlP buffers
+Plug 'ctrlpvim/ctrlp.vim'
+
+" QuickScope
+Plug 'unblevable/quick-scope'
+
+Plug 'matze/vim-move'
+
+Plug 'skamsie/vim-lineletters'
+
+" If you don't have nodejs and yarn
+" use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
+" see: https://github.com/iamcco/markdown-preview.nvim/issues/50
+Plug 'iamcco/markdown-preview.nvim'
 call plug#end()
 
 let g:loaded_matchit = 1
@@ -106,6 +121,8 @@ set hlsearch
 set completeopt=preview,menu
 set tags=./tags,tags;$HOME
 " set autochdir
+
+" set iskeyword-=_
 
 " Fold config
 set foldmethod=syntax
@@ -134,10 +151,14 @@ nmap <leader>v :Vista toggle<cr>
 
 " Save on Ctrl-S
 nmap <c-s> :w<CR>
-imap <c-s> <Esc>:w<CR>a
+imap <c-s> <Esc>:w<CR>
+
+"Ctrl P
+nnoremap <space>b :CtrlPBuffer<cr>
+let g:ctrlp_cmd = 'CtrlPBuffer'
 
 " fzf config
-nnoremap <C-p> :Files <Cr>
+nnoremap <leader>p :Files <Cr>
 
 " Floaterm config
 nnoremap   <C-n> :FloatermNew<CR>
@@ -253,8 +274,8 @@ nn <silent><buffer> xh :call CocLocations('ccls','$ccls/navigate',{'direction':'
 nn <silent><buffer> xl :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>
 nn <silent><buffer> xk :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>
 
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Use D to show documentation in preview window.
+nnoremap <silent> D :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -351,9 +372,9 @@ nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-"nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
-"nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
@@ -374,11 +395,17 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " In your init.lua or init.vim
 set termguicolors
 lua << EOF
-require("bufferline").setup{}
+require('bufferline').setup {
+  options = {
+    mode = "buffers", -- set to "tabs" to only show tabpages instead
+    numbers = "ordinal",
+    close_command = "bdelete! %d"
+    }
+}
 EOF
-nnoremap <nowait> <space>j :BufferLineCycleNext<CR>
-nnoremap <nowait> <space>k :BufferLineCyclePrev<CR>
-nnoremap <silent> gb :BufferLinePick<CR>
+"nnoremap <nowait> <space>k :BufferLineCycleNext<CR>
+"nnoremap <nowait> <space>j :BufferLineCyclePrev<CR>
+"nnoremap <silent> gb :BufferLinePick<CR>
 nnoremap <silent> <space>1 <Cmd>BufferLineGoToBuffer 1<CR>
 nnoremap <silent> <space>2 <Cmd>BufferLineGoToBuffer 2<CR>
 nnoremap <silent> <space>3 <Cmd>BufferLineGoToBuffer 3<CR>
@@ -393,9 +420,25 @@ nnoremap <silent> <space>9 <Cmd>BufferLineGoToBuffer 9<CR>
 "filetype plugin on
 let g:NERDCreateDefaultMappings = 1
 
-hi MatchParenCur cterm=bold
-hi MatchParen ctermbg=green
+hi MatchParenCur ctermbg=red
+hi MatchParen ctermbg=lightblue
 "hi MatchWordCur cterm=underline
 "
 
 "se mouse=a
+
+" QuickScope
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+
+nmap <S-j> <Plug>MoveLineDown
+nmap <S-k> <Plug>MoveLineUp
+vmap <S-j> <Plug>MoveBlockDown
+vmap <S-k> <Plug>MoveBlockUp
+
+map <silent>L <Plug>LineLetters
+
+map <C-a> <ESC>^
+imap <C-a> <ESC>I
+map <C-e> <ESC>$
+imap <C-e> <ESC>A
