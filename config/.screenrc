@@ -3,3 +3,7 @@ bind ^j focus down
 bind ^k focus up
 bind ^l focus right
 bind ^h focus left
+
+vbell on
+vbell_msg ''
+termcapinfo *  vb=:
