@@ -15,7 +15,8 @@ sudo apt install -y python3-pip
 sudo pip3 install --upgrade pynvim
 
 #for coc nvim
-sudo apt install -y nodejs
+curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
+sudo apt-get install -y nodejs
 sudo apt install -y npm
 
 #install PlugInstall
