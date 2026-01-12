@@ -1,10 +1,16 @@
 " LanguageClient-neovim
 " source % after change
 call plug#begin('~/.local/share/nvim/plugged')
+
+"Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
 " Vim themes
 Plug 'tomasr/molokai'
-" Plug 'joshdick/onedark.vim'
-" Plug 'tomasiser/vim-code-dark'
+Plug 'joshdick/onedark.vim'
+Plug 'rebelot/kanagawa.nvim'
+Plug 'tomasiser/vim-code-dark'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'ayu-theme/ayu-vim'
 
 " NERDTree ctrl-t
 Plug 'preservim/nerdtree'
@@ -20,8 +26,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " Snippets, using 'main' only now basically
-Plug 'SirVer/ultisnips'
-Plug 'KyleGrains/vim-snippets'
+" Plug 'SirVer/ultisnips'
+" Plug 'KyleGrains/vim-snippets'
 
 " auto pair
 Plug 'jiangmiao/auto-pairs'
@@ -30,7 +36,9 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 
 " Git
-Plug 'tpope/vim-fugitive'
+" Plug 'tpope/vim-fugitive'
+" Plug 'lewis6991/gitsigns.nvim'
+" Plug 'jesseduffield/lazygit'
 Plug 'airblade/vim-gitgutter'
 
 " fuzzy finder ctrl-p
@@ -54,8 +62,8 @@ Plug 'voldikss/vim-floaterm'
 Plug 'octol/vim-cpp-enhanced-highlight'
 
 " Markdown
-Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown' 
+" Plug 'godlygeek/tabular'
+" Plug 'plasticboy/vim-markdown' 
 
 " Repeat
 Plug 'tpope/vim-repeat'
@@ -73,10 +81,6 @@ Plug 'yggdroot/indentline'
 " vim-dispatch
 "Plug 'tpope/vim-dispatch'
 
-"Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
-Plug 'ryanoasis/vim-devicons' "Icons without colours
-Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
-
 " Start page
 Plug 'mhinz/vim-startify'
 Plug 'folke/which-key.nvim'
@@ -85,7 +89,7 @@ Plug 'folke/which-key.nvim'
 Plug 'scrooloose/nerdcommenter'
 
 " Matchup
-Plug 'andymass/vim-matchup' 
+" Plug 'andymass/vim-matchup' 
 
 " CtrlP buffers
 Plug 'ctrlpvim/ctrlp.vim'
@@ -100,9 +104,34 @@ Plug 'skamsie/vim-lineletters'
 " If you don't have nodejs and yarn
 " use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
 " see: https://github.com/iamcco/markdown-preview.nvim/issues/50
-Plug 'iamcco/markdown-preview.nvim'
+"Plug 'iamcco/markdown-preview.nvim'
 
 Plug 'christoomey/vim-tmux-navigator'
+"
+"Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
+Plug 'ryanoasis/vim-devicons' "Icons without colours
+"Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
+
+"Plug 'neovim/nvim-lspconfig'
+"Plug 'williamboman/mason.nvim'
+"Plug 'williamboman/mason-lspconfig.nvim'
+"Plug 'danymat/neogen'
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+Plug 'mcchrish/nnn.vim'
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'MunifTanjim/nui.nvim'
+
+Plug 'stevearc/aerial.nvim'
+
+Plug 'folke/zen-mode.nvim'
+
+Plug 'David-Kunz/gen.nvim'
 call plug#end()
 
 let g:loaded_matchit = 1
@@ -129,6 +158,9 @@ set hlsearch
 set completeopt=preview,menu
 set tags=./tags,tags;$HOME
 " set autochdir
+" 
+
+highlight CursorLine cterm=bold ctermbg=236 guibg=#333344
 
 " set iskeyword-=_
 
@@ -138,12 +170,28 @@ set nofoldenable
 set foldlevel=99
 
 colorscheme molokai
+set termguicolors
+"let ayucolor="dark"
+let g:rehash256 = 1
+hi Normal guibg=#000000 ctermbg=NONE
 
 " Move between windows bindings
-nnoremap <c-j> <c-w>j
-nnoremap <c-h> <c-w>h
-nnoremap <c-k> <c-w>k
-nnoremap <c-l> <c-w>l
+"nnoremap <c-j> <c-w>j
+"nnoremap <c-k> <c-w>k
+"nnoremap <c-h> <c-w>h
+"nnoremap <c-l> <c-w>l
+
+let g:LanguageClient_serverCommands = {
+    \ 'c': ['ccls', '--log-file=/tmp/cc.log'],
+    \ 'cpp': ['ccls', '--log-file=/tmp/cc.log'],
+    \ 'cuda': ['ccls', '--log-file=/tmp/cc.log'],
+    \ 'objc': ['ccls', '--log-file=/tmp/cc.log'],
+    \ }
+
+let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+let g:LanguageClient_settingsPath = '/home/YOUR_USERNAME/.config/nvim/settings.json'
+" https://github.com/autozimu/LanguageClient-neovim/issues/379 LSP snippet is not supported
+"let g:LanguageClient_hasSnippetSupport = 0
 
 " NERDTree
 nmap <c-t> :NERDTreeToggle<cr>
@@ -162,11 +210,16 @@ nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>
 
 "Ctrl P
-nnoremap <space>b :CtrlPBuffer<cr>
-let g:ctrlp_cmd = 'CtrlPBuffer'
+"nnoremap <space>b :CtrlPBuffer<cr>
+"let g:ctrlp_cmd = 'CtrlPBuffer'
 
 " fzf config
-nnoremap <leader>p :Files <Cr>
+nnoremap <space>f :Files <Cr>
+nnoremap <space>b :Buffers <Cr>
+nnoremap <space>m :Marks <Cr>
+nnoremap <space>l :Lines <Cr>
+
+nnoremap <space>h :ClangdSwitchSourceHeader<cr>
 
 " Floaterm config
 nnoremap   <C-n> :FloatermNew<CR>
@@ -183,7 +236,8 @@ nmap <leader>cb :CMakeBuild<cr>
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
-set encoding=utf-8
+"set encoding=utf8
+"set guifont=DroidSansM\ Nerd\ Font\ Mono\ Regular\ 14
 
 " TextEdit might fail if hidden is not set.
 set hidden
@@ -214,11 +268,11 @@ endif
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -250,37 +304,35 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " bases
-nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>
+nn <silent> zb :call CocLocations('ccls','$ccls/inheritance')<cr>
 " bases of up to 3 levels
-nn <silent> xB :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
+nn <silent> zB :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
 " derived
-nn <silent> xd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
+nn <silent> zd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
 " derived of up to 3 levels
-nn <silent> xD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
+nn <silent> zD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
 
 " caller
-nn <silent> xc :call CocLocations('ccls','$ccls/call')<cr>
+nn <silent> zc :call CocLocations('ccls','$ccls/call')<cr>
 " callee
-nn <silent> xC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+nn <silent> zC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
 
 " $ccls/member
 " member variables / variables in a namespace
-nn <silent> xm :call CocLocations('ccls','$ccls/member')<cr>
+nn <silent> zm :call CocLocations('ccls','$ccls/member')<cr>
 " member functions / functions in a namespace
-nn <silent> xf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
+nn <silent> zf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
 " nested classes / types in a namespace
-nn <silent> xs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
+nn <silent> zs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
 
-nmap <silent> xt <Plug>(coc-type-definition)<cr>
-nn <silent> xv :call CocLocations('ccls','$ccls/vars')<cr>
-nn <silent> xV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
+nmap <silent> zt <Plug>(coc-type-definition)<cr>
+nn <silent> zv :call CocLocations('ccls','$ccls/vars')<cr>
+nn <silent> zV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
 
-nn xx x
-
-nn <silent><buffer> xj :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})<cr>
-nn <silent><buffer> xh :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})<cr>
-nn <silent><buffer> xl :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>
-nn <silent><buffer> xk :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>
+nn <silent> zj :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})<cr>
+nn <silent> zh :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})<cr>
+nn <silent> zl :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>
+nn <silent> zk :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>
 
 " Use D to show documentation in preview window.
 nnoremap <silent> D :call <SID>show_documentation()<CR>
@@ -364,7 +416,9 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+autocmd User CocStatusChange redrawstatus
 
 let g:airline_powerline_fonts = 1
 
@@ -402,30 +456,7 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " BufferLine
 " In your init.lua or init.vim
 set termguicolors
-lua << EOF
-require('bufferline').setup {
-  options = {
-    mode = "buffers", -- set to "tabs" to only show tabpages instead
-    numbers = "ordinal",
-    close_command = "bdelete! %d"
-    }
-}
-EOF
-"nnoremap <nowait> <space>k :BufferLineCycleNext<CR>
-"nnoremap <nowait> <space>j :BufferLineCyclePrev<CR>
-"nnoremap <silent> gb :BufferLinePick<CR>
-nnoremap <silent> <space>1 <Cmd>BufferLineGoToBuffer 1<CR>
-nnoremap <silent> <space>2 <Cmd>BufferLineGoToBuffer 2<CR>
-nnoremap <silent> <space>3 <Cmd>BufferLineGoToBuffer 3<CR>
-nnoremap <silent> <space>4 <Cmd>BufferLineGoToBuffer 4<CR>
-nnoremap <silent> <space>5 <Cmd>BufferLineGoToBuffer 5<CR>
-nnoremap <silent> <space>6 <Cmd>BufferLineGoToBuffer 6<CR>
-nnoremap <silent> <space>7 <Cmd>BufferLineGoToBuffer 7<CR>
-nnoremap <silent> <space>8 <Cmd>BufferLineGoToBuffer 8<CR>
-nnoremap <silent> <space>9 <Cmd>BufferLineGoToBuffer 9<CR>
 
-" nerd commenter
-"filetype plugin on
 let g:NERDCreateDefaultMappings = 1
 
 " Add spaces after comment delimiters by default
@@ -457,20 +488,38 @@ hi MatchParen ctermbg=lightblue
 "hi MatchWordCur cterm=underline
 "
 
-"se mouse=a
+se mouse=
 
 " QuickScope
 " Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
-nmap <S-j> <Plug>MoveLineDown
-nmap <S-k> <Plug>MoveLineUp
-vmap <S-j> <Plug>MoveBlockDown
-vmap <S-k> <Plug>MoveBlockUp
+"nmap <S-j> <Plug>MoveLineDown
+"nmap <S-k> <Plug>MoveLineUp
+"vmap <S-j> <Plug>MoveBlockDown
+"vmap <S-k> <Plug>MoveBlockUp
 
-map <silent>L <Plug>LineLetters
+"map <silent>L <Plug>LineLetters
 
-map <C-a> <ESC>^
-imap <C-a> <ESC>I
-map <C-e> <ESC>$
-imap <C-e> <ESC>A
+"map <C-a> <ESC>^
+"imap <C-a> <ESC>I
+"map <C-e> <ESC>$
+"imap <C-e> <ESC>A
+
+nnoremap <space>q :q<cr>
+nnoremap <space>e :e<cr>
+
+nnoremap <space>p :sp<cr>
+nnoremap <space>v :vs<cr>
+
+nnoremap <c-h> :BufferLineCycleNext<CR>
+nnoremap <c-l> :BufferLineCyclePrev<CR>
+
+let g:airline_section_warning=''
+let g:airline_section_a=''
+let g:airline_section_b=''
+let g:airline_section_y=''
+let g:airline_section_z=''
+let g:airline_detect_whitespace=0
+let g:airline#extensions#hunks#enabled = 0
+let g:airline#extensions#default#section_truncate_width = {}
