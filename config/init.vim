@@ -107,10 +107,6 @@ Plug 'skamsie/vim-lineletters'
 "Plug 'iamcco/markdown-preview.nvim'
 
 Plug 'christoomey/vim-tmux-navigator'
-"
-"Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
-Plug 'ryanoasis/vim-devicons' "Icons without colours
-"Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 
 "Plug 'neovim/nvim-lspconfig'
 "Plug 'williamboman/mason.nvim'
@@ -132,6 +128,10 @@ Plug 'stevearc/aerial.nvim'
 Plug 'folke/zen-mode.nvim'
 
 Plug 'David-Kunz/gen.nvim'
+"
+"Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
+"Plug 'ryanoasis/vim-devicons' "Icons without colours
+"Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 call plug#end()
 
 let g:loaded_matchit = 1
