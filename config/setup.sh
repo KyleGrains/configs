@@ -28,7 +28,8 @@ cp init.vim ~/.config/nvim/
 
 #install ccls
 #sudo apt install ccls
-sudo snap install ccls --classic
+#sudo snap install ccls --classic
+sudo apt install clangd
 
 #install cppman
 pip3 install cppman
@@ -48,6 +49,7 @@ sudo ln -s /usr/bin/nvim /usr/bin/vim
 #:CocConfig
 #:CocInstall coc-marketplace
 #:CocInstall coc-cmake
+#:CocInstall coc-clangd
 
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install

@@ -348,7 +348,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+"autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -523,3 +523,11 @@ let g:airline_section_z=''
 let g:airline_detect_whitespace=0
 let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#default#section_truncate_width = {}
+
+inoremap <C-j> {}<Left>
+inoremap <C-k> []<Left>
+inoremap <C-l> ()<Left>
+inoremap <C-e> =<Left>
+
+nnoremap <C-u> %
+vnoremap <C-u> %
