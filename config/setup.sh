@@ -1,55 +1,76 @@
-#sudo echo "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
-sudo apt install curl
-sudo apt install python3-pip
-sudo apt install git
-#sudo apt install gcc
+#!/usr/bin/env bash
+set -euo pipefail
 
-git config --global user.email "kyle.grains@gmail.com"
-git config --global user.name "Kyle"
+CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-#install nvim
-#wget https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.deb
-#sudo apt install ./nvim-linux64.deb
+install_packages() {
+  sudo apt update
+  sudo apt install -y \
+    clangd \
+    curl \
+    fzf \
+    git \
+    nodejs \
+    npm \
+    python3-pip \
+    tmux
 
-sudo apt install -y python3-pip
-sudo pip3 install --upgrade pynvim
+  python3 -m pip install --user --upgrade pynvim cppman
+}
 
-#for coc nvim
-curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo apt install -y npm
+link_file() {
+  local source_file="$1"
+  local target_file="$2"
 
-#install PlugInstall
-#mkdir -p $HOME/.local/share/nvim/site/autoload
-#cp ./plug.vim $HOME/.local/share/nvim/site/autoload
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-mkdir ~/.config/nvim/
-cp init.vim ~/.config/nvim/
+  mkdir -p "$(dirname "$target_file")"
+  ln -sfn "$source_file" "$target_file"
+}
 
-#install ccls
-#sudo apt install ccls
-#sudo snap install ccls --classic
-sudo apt install clangd
+setup_git() {
+  git config --global user.email "kyle.grains@gmail.com"
+  git config --global user.name "Kyle"
+}
 
-#install cppman
-pip3 install cppman
+setup_shell_tools() {
+  link_file "$CONFIG_DIR/.screenrc" "$HOME/.screenrc"
+  link_file "$CONFIG_DIR/.tmux.conf" "$HOME/.tmux.conf"
+  link_file "$CONFIG_DIR/.ccls" "$HOME/.ccls"
+}
 
-sudo ln -s /usr/bin/nvim /usr/bin/vim
+setup_nvim() {
+  mkdir -p "$HOME/.config/nvim"
 
+  link_file "$CONFIG_DIR/init.vim" "$HOME/.config/nvim/init.vim"
+  link_file "$CONFIG_DIR/coc-settings.json" "$HOME/.config/nvim/coc-settings.json"
 
-#snap install cmake --channel=latest/stable --classic
-#pip3 install conan
-#source ~/.profile
-#conan profile new default --detect
-#conan profile update settings.compiler.libcxx=libstdc++11 default
+  # Kept as a local reference for the newer lazy.nvim/Lua setup on this PC.
+  link_file "$CONFIG_DIR/init.lua.bak" "$HOME/.config/nvim/init.lua.bak"
+  link_file "$CONFIG_DIR/lazy-lock.json" "$HOME/.config/nvim/lazy-lock.json"
 
-#sudo apt install cppcheck clang-tidy ccache
+  mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload"
+  if [ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" ]; then
+    curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" \
+      --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  fi
+}
 
-#:PlugInstall
-#:CocConfig
-#:CocInstall coc-marketplace
-#:CocInstall coc-cmake
-#:CocInstall coc-clangd
+setup_vim_alias() {
+  if command -v nvim >/dev/null 2>&1 && [ ! -e /usr/bin/vim ]; then
+    sudo ln -s "$(command -v nvim)" /usr/bin/vim
+  fi
+}
 
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install
+install_packages
+setup_git
+setup_shell_tools
+setup_nvim
+setup_vim_alias
+
+cat <<'EOF'
+Done.
+
+Open nvim and run:
+  :PlugInstall
+  :CocInstall coc-marketplace coc-cmake coc-clangd
+EOF

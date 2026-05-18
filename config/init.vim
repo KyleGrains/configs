@@ -527,7 +527,7 @@ let g:airline#extensions#default#section_truncate_width = {}
 inoremap <C-j> {}<Left>
 inoremap <C-k> []<Left>
 inoremap <C-l> ()<Left>
-inoremap <C-e> =<Left>
+inoremap <C-e> =<space>
 
 nnoremap <C-u> %
 vnoremap <C-u> %
