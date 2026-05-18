@@ -43,10 +43,6 @@ setup_nvim() {
   link_file "$CONFIG_DIR/init.vim" "$HOME/.config/nvim/init.vim"
   link_file "$CONFIG_DIR/coc-settings.json" "$HOME/.config/nvim/coc-settings.json"
 
-  # Kept as a local reference for the newer lazy.nvim/Lua setup on this PC.
-  link_file "$CONFIG_DIR/init.lua.bak" "$HOME/.config/nvim/init.lua.bak"
-  link_file "$CONFIG_DIR/lazy-lock.json" "$HOME/.config/nvim/lazy-lock.json"
-
   mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload"
   if [ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" ]; then
     curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" \
