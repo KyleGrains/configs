@@ -296,12 +296,228 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
+function! s:RefsPlusUrlDecode(str) abort
+  return substitute(a:str, '%\(\x\x\)', '\=nr2char(str2nr(submatch(1), 16))', 'g')
+endfunction
+
+function! s:RefsPlusUriToPath(uri) abort
+  let l:path = substitute(a:uri, '^file://', '', '')
+  return fnamemodify(s:RefsPlusUrlDecode(l:path), ':p')
+endfunction
+
+function! s:RefsPlusLocInfo(loc) abort
+  let l:uri = get(a:loc, 'uri', get(a:loc, 'targetUri', ''))
+  let l:range = get(a:loc, 'range', get(a:loc, 'targetSelectionRange', get(a:loc, 'targetRange', {})))
+  let l:start = get(l:range, 'start', {})
+  if empty(l:uri) || empty(l:start)
+    return {}
+  endif
+  return {
+        \ 'path': s:RefsPlusUriToPath(l:uri),
+        \ 'lnum': get(l:start, 'line', 0) + 1,
+        \ 'col': get(l:start, 'character', 0) + 1
+        \ }
+endfunction
+
+function! s:RefsPlusCleanSignature(text) abort
+  let l:text = substitute(a:text, '\s*{\s*$', '', '')
+  let l:text = substitute(l:text, '\s\+', ' ', 'g')
+  return trim(l:text)
+endfunction
+
+function! s:RefsPlusLooksLikeFunction(text) abort
+  let l:text = s:RefsPlusCleanSignature(a:text)
+  if l:text !~# ')' || l:text =~# ';\s*$'
+    return 0
+  endif
+  if l:text =~# '^\s*}\?\s*\(else\s\+if\|else\|if\|for\|while\|switch\|catch\|do\)\>'
+    return 0
+  endif
+  return 1
+endfunction
+
+function! s:RefsPlusSignature(lines, lnum) abort
+  let l:current = get(a:lines, a:lnum - 1, '')
+  if s:RefsPlusLooksLikeFunction(l:current)
+    let l:next = a:lnum + 1
+    while l:next <= len(a:lines) && get(a:lines, l:next - 1, '') =~# '^\s*$'
+      let l:next += 1
+    endwhile
+    if l:next <= len(a:lines) && get(a:lines, l:next - 1, '') =~# '^\s*{\s*$'
+      return s:RefsPlusCleanSignature(l:current)
+    endif
+  endif
+
+  let l:stop = max([1, a:lnum - 250])
+  for l:i in range(a:lnum, l:stop, -1)
+    let l:line = get(a:lines, l:i - 1, '')
+    if l:line !~# '{'
+      continue
+    endif
+    let l:head = s:RefsPlusCleanSignature(l:line)
+    if l:head =~# '^}\?\s*\(else\s\+if\|else\|if\|for\|while\|switch\|catch\|do\)\>'
+      continue
+    endif
+    let l:parts = []
+    let l:j = l:i
+    while l:j >= l:stop && len(l:parts) < 8
+      let l:part = get(a:lines, l:j - 1, '')
+      call insert(l:parts, l:part)
+      if l:j < l:i && l:part =~# '^\s*$'
+        break
+      endif
+      if l:j < l:i && l:part =~# ';\s*$'
+        break
+      endif
+      let l:candidate = join(l:parts, ' ')
+      if s:RefsPlusLooksLikeFunction(l:candidate)
+        return s:RefsPlusCleanSignature(l:candidate)
+      endif
+      let l:j -= 1
+    endwhile
+  endfor
+  return '(enclosing function not found)'
+endfunction
+
+function! s:RefsPlusOpenAt(mode) abort
+  let l:item = get(get(b:, 'coc_refs_plus_line_items', []), line('.') - 1, {})
+  if empty(l:item)
+    return
+  endif
+  if a:mode ==# 'preview'
+    execute 'pedit +' . l:item.lnum . ' ' . fnameescape(l:item.path)
+    wincmd P
+    call cursor(l:item.lnum, l:item.col)
+    wincmd p
+    return
+  endif
+  if a:mode ==# 'split'
+    execute 'split +' . l:item.lnum . ' ' . fnameescape(l:item.path)
+  elseif a:mode ==# 'vsplit'
+    execute 'vsplit +' . l:item.lnum . ' ' . fnameescape(l:item.path)
+  else
+    execute 'edit +' . l:item.lnum . ' ' . fnameescape(l:item.path)
+  endif
+  call cursor(l:item.lnum, l:item.col)
+  normal! zv
+endfunction
+
+function! s:CocReferencesPlus() abort
+  let l:refs = CocAction('references')
+  if empty(l:refs)
+    echohl WarningMsg | echom 'No references found' | echohl None
+    return
+  endif
+
+  let l:groups = []
+  let l:group_by_key = {}
+  let l:file_cache = {}
+  let l:count = 0
+
+  for l:loc in l:refs
+    let l:item = s:RefsPlusLocInfo(l:loc)
+    if empty(l:item) || !filereadable(l:item.path)
+      continue
+    endif
+    if !has_key(l:file_cache, l:item.path)
+      let l:file_cache[l:item.path] = readfile(l:item.path)
+    endif
+    let l:file_lines = l:file_cache[l:item.path]
+    let l:func = s:RefsPlusSignature(l:file_lines, l:item.lnum)
+    let l:key = l:item.path . "\t" . l:func
+    if !has_key(l:group_by_key, l:key)
+      let l:group_by_key[l:key] = len(l:groups)
+      call add(l:groups, {
+            \ 'path': l:item.path,
+            \ 'rel': fnamemodify(l:item.path, ':~:.'),
+            \ 'func': l:func,
+            \ 'items': []
+            \ })
+    endif
+
+    let l:first = max([1, l:item.lnum - 2])
+    let l:last = min([len(l:file_lines), l:item.lnum + 2])
+    let l:context = []
+    for l:n in range(l:first, l:last)
+      let l:mark = l:n == l:item.lnum ? '>' : ' '
+      call add(l:context, printf('%s %5d  %s', l:mark, l:n, get(l:file_lines, l:n - 1, '')))
+    endfor
+
+    call add(l:groups[l:group_by_key[l:key]].items, {
+          \ 'target': l:item,
+          \ 'context': l:context
+          \ })
+    let l:count += 1
+  endfor
+
+  if l:count == 0
+    echohl WarningMsg | echom 'No readable file references found' | echohl None
+    return
+  endif
+
+  let l:lines = ['Coc References+ grouped by caller  <CR>:open  p:preview  s:split  v:vsplit  q:close', '']
+  let l:line_items = [{}, {}]
+  let l:group_no = 1
+
+  for l:group in l:groups
+    call add(l:lines, printf('%d. [%d call site%s] %s', l:group_no, len(l:group.items), len(l:group.items) > 1 ? 's' : '', l:group.func))
+    call add(l:line_items, {})
+    call add(l:lines, '   ' . l:group.rel)
+    call add(l:line_items, {})
+    let l:group_no += 1
+
+    for l:entry in l:group.items
+      let l:item = l:entry.target
+      call add(l:lines, printf('   @ %s:%d:%d', fnamemodify(l:item.path, ':~:.'), l:item.lnum, l:item.col))
+      call add(l:line_items, l:item)
+      for l:ctx in l:entry.context
+        call add(l:lines, l:ctx)
+        call add(l:line_items, l:item)
+      endfor
+      call add(l:lines, '')
+      call add(l:line_items, {})
+    endfor
+  endfor
+
+  botright 18new
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap nonumber norelativenumber
+  file Coc\ References+
+  call setline(1, l:lines)
+  syntax match RefsPlusTitle /^Coc References+.*/
+  syntax match RefsPlusGroup /^\d\+\. \[.*\].*/
+  syntax match RefsPlusLocation /^   @ .*/
+  syntax match RefsPlusHit /^> .*/
+  highlight default link RefsPlusTitle Title
+  highlight default link RefsPlusGroup Function
+  highlight default link RefsPlusLocation Directory
+  highlight default link RefsPlusHit Search
+  let b:coc_refs_plus_line_items = l:line_items
+  nnoremap <silent><buffer> <CR> :call <SID>RefsPlusOpenAt('edit')<CR>
+  nnoremap <silent><buffer> p :call <SID>RefsPlusOpenAt('preview')<CR>
+  nnoremap <silent><buffer> s :call <SID>RefsPlusOpenAt('split')<CR>
+  nnoremap <silent><buffer> v :call <SID>RefsPlusOpenAt('vsplit')<CR>
+  nnoremap <silent><buffer> q :close<CR>
+  normal! gg
+endfunction
+
+
+" Keep function-aware statusline fresh after search jumps.
+nnoremap <silent> * *:redrawstatus<CR>
+nnoremap <silent> # #:redrawstatus<CR>
+nnoremap <silent> n n:redrawstatus<CR>
+nnoremap <silent> N N:redrawstatus<CR>
+
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gs :call CocAction('jumpDefinition', 'split')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gX :call <SID>CocReferencesPlus()<CR>
+" Coc call hierarchy: shows references grouped by caller function
+nmap <silent> gR :call CocAction('showIncomingCalls')<CR>
+
+
 
 " bases
 nn <silent> zb :call CocLocations('ccls','$ccls/inheritance')<cr>
@@ -313,9 +529,9 @@ nn <silent> zd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})
 nn <silent> zD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
 
 " caller
-nn <silent> zc :call CocLocations('ccls','$ccls/call')<cr>
+nn <silent> zc :call CocAction('showIncomingCalls')<cr>
 " callee
-nn <silent> zC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+nn <silent> zC :call CocAction('showOutgoingCalls')<cr>
 
 " $ccls/member
 " member variables / variables in a namespace
@@ -422,6 +638,182 @@ autocmd User CocStatusChange redrawstatus
 
 let g:airline_powerline_fonts = 1
 
+function! AirlineNearestCppSymbol()
+  if &filetype !~# 'cpp\|c'
+    return ''
+  endif
+
+  let l:lnum = line('.')
+  while l:lnum > 0
+    let l:text = getline(l:lnum)
+    let l:trimmed = substitute(l:text, '^\s*', '', '')
+
+    if l:trimmed =~# '^\%(if\|for\|while\|switch\|catch\|else\|do\)\>'
+      let l:lnum -= 1
+      continue
+    endif
+
+    if l:trimmed =~# '(' && l:trimmed =~# ')\s*\%(const\s*\)\?{\s*$'
+      let l:trimmed = substitute(l:trimmed, '\s*{\s*$', '', '')
+      return l:trimmed
+    endif
+
+    if l:trimmed =~# '(' && l:trimmed =~# ')\s*\%(const\s*\)\?$'
+      let l:next = nextnonblank(l:lnum + 1)
+      if l:next > 0 && getline(l:next) =~# '^\s*{\s*$'
+        return l:trimmed
+      endif
+    endif
+
+    let l:lnum -= 1
+  endwhile
+
+  return ''
+endfunction
+
+function! AirlineFileAndSymbol()
+  let l:symbol = get(b:, 'vista_nearest_method_or_function', '')
+  if empty(l:symbol)
+    let l:symbol = get(b:, 'coc_current_function', '')
+  endif
+  if empty(l:symbol)
+    let l:symbol = AirlineNearestCppSymbol()
+  endif
+
+  let l:name = expand('%:t')
+  if empty(l:name)
+    let l:name = '[No Name]'
+  endif
+
+  if !empty(l:symbol)
+    if winwidth(0) < 100
+      return l:symbol
+    endif
+    return l:symbol . ' > ' . l:name
+  endif
+
+  return l:name
+endfunction
+
+call airline#parts#define_function('file_and_symbol', 'AirlineFileAndSymbol')
+let g:airline_section_c = airline#section#create(['file_and_symbol'])
+
+function! AirlineNearestCppSymbolInBuffer(bufnr, lnum) abort
+  let l:lnum = a:lnum
+  while l:lnum > 0
+    let l:text = get(getbufline(a:bufnr, l:lnum), 0, '')
+    let l:trimmed = substitute(l:text, '^\s*', '', '')
+
+    if l:trimmed =~# '^}\?\s*\(else\s\+if\|else\|if\|for\|while\|switch\|catch\|do\)\>'
+      let l:lnum -= 1
+      continue
+    endif
+
+    if l:trimmed =~# '(' && l:trimmed =~# ')\s*\%(const\s*\)\?{\s*$'
+      return substitute(l:trimmed, '\s*{\s*$', '', '')
+    endif
+
+    if l:trimmed =~# '(' && l:trimmed =~# ')\s*\%(const\s*\)\?$'
+      let l:next = l:lnum + 1
+      while !empty(getbufline(a:bufnr, l:next)) && get(getbufline(a:bufnr, l:next), 0, '') =~# '^\s*$'
+        let l:next += 1
+      endwhile
+      if get(getbufline(a:bufnr, l:next), 0, '') =~# '^\s*{\s*$'
+        return l:trimmed
+      endif
+    endif
+
+    let l:lnum -= 1
+  endwhile
+  return ''
+endfunction
+
+function! AirlineFileAndSymbolForWindow(winnr, bufnr) abort
+  let l:name = fnamemodify(bufname(a:bufnr), ':t')
+  if empty(l:name)
+    let l:name = '[No Name]'
+  endif
+
+  let l:pos = getcurpos(a:winnr)
+  let l:lnum = get(l:pos, 1, 1)
+  let l:symbol = AirlineNearestCppSymbolInBuffer(a:bufnr, l:lnum)
+  if empty(l:symbol)
+    return l:name
+  endif
+  return l:symbol . ' > ' . l:name
+endfunction
+
+function! SelectedCocLocationFromListLine() abort
+  let l:line = getline('.')
+  let l:match = matchlist(l:line, '|\%([^|]* \)\?\(\d\+\) Col \(\d\+\)|')
+  if empty(l:match)
+    return {}
+  endif
+  let l:lnum = str2nr(l:match[1])
+  let l:col = str2nr(l:match[2])
+  for l:loc in get(g:, 'coc_jump_locations', [])
+    if get(l:loc, 'lnum', -1) == l:lnum && get(l:loc, 'col', -1) == l:col
+      return l:loc
+    endif
+  endfor
+  return {}
+endfunction
+
+function! AirlineFileAndSymbolForLocation(loc) abort
+  let l:path = get(a:loc, 'filename', '')
+  if empty(l:path) || !filereadable(l:path)
+    return ''
+  endif
+  let l:lines = readfile(l:path)
+  let l:lnum = get(a:loc, 'lnum', 1)
+  let l:symbol = s:RefsPlusSignature(l:lines, l:lnum)
+  let l:name = fnamemodify(l:path, ':t')
+  if empty(l:symbol) || l:symbol ==# '(enclosing function not found)'
+    return l:name
+  endif
+  return l:symbol . ' > ' . l:name
+endfunction
+
+function! RefreshCocPreviewStatusline() abort
+  let l:preview_win = coc#list#get_preview(0)
+  if l:preview_win <= 0
+    return
+  endif
+  let l:winnr = win_id2win(l:preview_win)
+  if l:winnr <= 0
+    return
+  endif
+  let l:bufnr = winbufnr(l:winnr)
+  let l:selected_loc = SelectedCocLocationFromListLine()
+  let l:section_c = AirlineFileAndSymbolForLocation(l:selected_loc)
+  if empty(l:section_c)
+    let l:section_c = AirlineFileAndSymbolForWindow(l:winnr, l:bufnr)
+  endif
+  call setwinvar(l:winnr, 'airline_section_a', 'Preview')
+  call setwinvar(l:winnr, 'airline_section_b', '')
+  call setwinvar(l:winnr, 'airline_section_c', l:section_c)
+  call setwinvar(l:winnr, 'airline_section_x', '')
+  call setwinvar(l:winnr, 'airline_section_y', '')
+  silent! call airline#update_statusline_inactive([l:winnr])
+  redrawstatus
+endfunction
+
+function! AirlinePreviewSymbolStatusline(...) abort
+  if getwinvar(a:2.winnr, '&previewwindow')
+    call setwinvar(a:2.winnr, 'airline_section_a', 'Preview')
+    call setwinvar(a:2.winnr, 'airline_section_b', '')
+    call setwinvar(a:2.winnr, 'airline_section_c', AirlineFileAndSymbolForWindow(a:2.winnr, a:2.bufnr))
+    call setwinvar(a:2.winnr, 'airline_section_x', '')
+    call setwinvar(a:2.winnr, 'airline_section_y', '')
+    return 1
+  endif
+endfunction
+call airline#add_inactive_statusline_func('AirlinePreviewSymbolStatusline')
+
+autocmd VimEnter * silent! call vista#RunForNearestMethodOrFunction()
+autocmd CursorHold,CursorHoldI,CursorMoved,BufEnter * redrawstatus
+autocmd User CocListMoved call RefreshCocPreviewStatusline()
+
 " Mappings for CoCList
 " Show all diagnostics.
 nnoremap <silent><nowait> <space>d  :<C-u>CocList diagnostics<cr>
@@ -516,12 +908,15 @@ nnoremap <c-h> :BufferLineCycleNext<CR>
 nnoremap <c-l> :BufferLineCyclePrev<CR>
 
 let g:airline_section_warning=''
+let g:airline_section_error=''
 let g:airline_section_a=''
 let g:airline_section_b=''
+let g:airline_section_x=''
 let g:airline_section_y=''
 let g:airline_section_z=''
 let g:airline_detect_whitespace=0
 let g:airline#extensions#hunks#enabled = 0
+let g:airline#extensions#searchcount#enabled = 0
 let g:airline#extensions#default#section_truncate_width = {}
 
 inoremap <C-j> {}<Left>
