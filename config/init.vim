@@ -217,12 +217,13 @@ imap <c-s> <Esc>:w<CR>
 nnoremap <space>f :Files <Cr>
 nnoremap <space>b :Buffers <Cr>
 nnoremap <space>m :Marks <Cr>
-nnoremap <space>l :Lines <Cr>
+nnoremap <space>l :BLines <Cr>
 
 nnoremap <space>h :ClangdSwitchSourceHeader<cr>
 
 " Floaterm config
-nnoremap   <C-n> :FloatermNew<CR>
+nnoremap <silent> <C-n> :FloatermToggle<CR>
+tnoremap <silent> <C-n> <C-\><C-n>:FloatermToggle<CR>
 
 " vim-cmake config
 " set CMAKE_EXPORT_COMPILE_COMMANDS
@@ -637,6 +638,23 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 autocmd User CocStatusChange redrawstatus
 
 let g:airline_powerline_fonts = 1
+let g:airline_context_mode = 'function'
+
+function! AirlineStatusContext(symbol, name) abort
+  if g:airline_context_mode ==# 'filename' || empty(a:symbol)
+    return a:name
+  endif
+  return a:symbol
+endfunction
+
+function! ToggleAirlineContext() abort
+  let g:airline_context_mode = g:airline_context_mode ==# 'function'
+        \ ? 'filename'
+        \ : 'function'
+  silent! call RefreshCocPreviewStatusline()
+  redrawstatus!
+  echo 'Statusline: ' . g:airline_context_mode
+endfunction
 
 function! AirlineNearestCppSymbol()
   if &filetype !~# 'cpp\|c'
@@ -685,18 +703,12 @@ function! AirlineFileAndSymbol()
     let l:name = '[No Name]'
   endif
 
-  if !empty(l:symbol)
-    if winwidth(0) < 100
-      return l:symbol
-    endif
-    return l:symbol . ' > ' . l:name
-  endif
-
-  return l:name
+  return AirlineStatusContext(l:symbol, l:name)
 endfunction
 
 call airline#parts#define_function('file_and_symbol', 'AirlineFileAndSymbol')
 let g:airline_section_c = airline#section#create(['file_and_symbol'])
+nnoremap <silent> <space>e :call ToggleAirlineContext()<CR>
 
 function! AirlineNearestCppSymbolInBuffer(bufnr, lnum) abort
   let l:lnum = a:lnum
@@ -737,10 +749,7 @@ function! AirlineFileAndSymbolForWindow(winnr, bufnr) abort
   let l:pos = getcurpos(a:winnr)
   let l:lnum = get(l:pos, 1, 1)
   let l:symbol = AirlineNearestCppSymbolInBuffer(a:bufnr, l:lnum)
-  if empty(l:symbol)
-    return l:name
-  endif
-  return l:symbol . ' > ' . l:name
+  return AirlineStatusContext(l:symbol, l:name)
 endfunction
 
 function! SelectedCocLocationFromListLine() abort
@@ -768,10 +777,10 @@ function! AirlineFileAndSymbolForLocation(loc) abort
   let l:lnum = get(a:loc, 'lnum', 1)
   let l:symbol = s:RefsPlusSignature(l:lines, l:lnum)
   let l:name = fnamemodify(l:path, ':t')
-  if empty(l:symbol) || l:symbol ==# '(enclosing function not found)'
-    return l:name
+  if l:symbol ==# '(enclosing function not found)'
+    let l:symbol = ''
   endif
-  return l:symbol . ' > ' . l:name
+  return AirlineStatusContext(l:symbol, l:name)
 endfunction
 
 function! RefreshCocPreviewStatusline() abort
@@ -815,13 +824,6 @@ autocmd CursorHold,CursorHoldI,CursorMoved,BufEnter * redrawstatus
 autocmd User CocListMoved call RefreshCocPreviewStatusline()
 
 " Mappings for CoCList
-" Show all diagnostics.
-nnoremap <silent><nowait> <space>d  :<C-u>CocList diagnostics<cr>
-" Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-" Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document.
 nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
@@ -898,12 +900,6 @@ let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 "map <C-e> <ESC>$
 "imap <C-e> <ESC>A
 
-nnoremap <space>q :q<cr>
-nnoremap <space>e :e<cr>
-
-nnoremap <space>p :sp<cr>
-nnoremap <space>v :vs<cr>
-
 nnoremap <c-h> :BufferLineCycleNext<CR>
 nnoremap <c-l> :BufferLineCyclePrev<CR>
 
@@ -926,3 +922,11 @@ inoremap <C-e> =<space>
 
 nnoremap <C-u> %
 vnoremap <C-u> %
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> <space>d  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+"nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+"nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
