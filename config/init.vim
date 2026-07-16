@@ -1,137 +1,63 @@
-" LanguageClient-neovim
-" source % after change
+" Set the leader before plugins and mappings.
+let mapleader = ","
+
+" Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-"Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
-" Vim themes
+" Theme
 Plug 'tomasr/molokai'
-Plug 'joshdick/onedark.vim'
-Plug 'rebelot/kanagawa.nvim'
-Plug 'tomasiser/vim-code-dark'
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'ayu-theme/ayu-vim'
 
-" NERDTree ctrl-t
+" NERDTree
 Plug 'preservim/nerdtree'
 
 " CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" vista
+" Vista
 Plug 'liuchengxu/vista.vim'
 
 " Airline status bar
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 
-" Snippets, using 'main' only now basically
-" Plug 'SirVer/ultisnips'
-" Plug 'KyleGrains/vim-snippets'
-
-" auto pair
+" Automatic pairs
 Plug 'jiangmiao/auto-pairs'
 
 " Surround
 Plug 'tpope/vim-surround'
 
 " Git
-" Plug 'tpope/vim-fugitive'
-" Plug 'lewis6991/gitsigns.nvim'
-" Plug 'jesseduffield/lazygit'
 Plug 'airblade/vim-gitgutter'
 
-" fuzzy finder ctrl-p
+" Fuzzy finder
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-
-" NeoFormat
-Plug 'sbdchd/neoformat'
 
 " CMake
 Plug 'cdelledonne/vim-cmake'
 Plug 'antoinemadec/FixCursorHold.nvim'
 
-" floaterm ctrl-n
+" Floating terminal
 Plug 'voldikss/vim-floaterm'
 
-" Syntastic
-"Plug 'vim-syntastic/syntastic'
-
-" cpp syntax highlight
+" C++ syntax highlighting
 Plug 'octol/vim-cpp-enhanced-highlight'
-
-" Markdown
-" Plug 'godlygeek/tabular'
-" Plug 'plasticboy/vim-markdown' 
 
 " Repeat
 Plug 'tpope/vim-repeat'
 
 " Indent
 Plug 'yggdroot/indentline'
-" Plug 'nathanaelkane/vim-indent-guides'
-
-" Multi-cursor
-"Plug 'mg979/vim-visual-multi', {'branch': 'master'}
-
-" EasyMotion
-"Plug 'easymotion/vim-easymotion'
-
-" vim-dispatch
-"Plug 'tpope/vim-dispatch'
 
 " Start page
 Plug 'mhinz/vim-startify'
-Plug 'folke/which-key.nvim'
 
 " Nerd commenter
 Plug 'scrooloose/nerdcommenter'
 
-" Matchup
-" Plug 'andymass/vim-matchup' 
-
-" CtrlP buffers
-Plug 'ctrlpvim/ctrlp.vim'
-
 " QuickScope
 Plug 'unblevable/quick-scope'
 
-Plug 'matze/vim-move'
-
-Plug 'skamsie/vim-lineletters'
-
-" If you don't have nodejs and yarn
-" use pre build, add 'vim-plug' to the filetype list so vim-plug can update this plugin
-" see: https://github.com/iamcco/markdown-preview.nvim/issues/50
-"Plug 'iamcco/markdown-preview.nvim'
-
 Plug 'christoomey/vim-tmux-navigator'
-
-"Plug 'neovim/nvim-lspconfig'
-"Plug 'williamboman/mason.nvim'
-"Plug 'williamboman/mason-lspconfig.nvim'
-"Plug 'danymat/neogen'
-
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-
-Plug 'mcchrish/nnn.vim'
-
-Plug 'nvim-lua/plenary.nvim'
-Plug 'MunifTanjim/nui.nvim'
-
-Plug 'stevearc/aerial.nvim'
-
-Plug 'folke/zen-mode.nvim'
-
-Plug 'David-Kunz/gen.nvim'
-"
-"Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
-"Plug 'ryanoasis/vim-devicons' "Icons without colours
-"Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 call plug#end()
 
 let g:loaded_matchit = 1
@@ -142,7 +68,7 @@ else
     nmap <C-h> <C-w>h
 endif
 
-" Syntax config
+" General editor options
 set number
 filetype on
 syntax on
@@ -157,12 +83,8 @@ set cursorline
 set hlsearch
 set completeopt=preview,menu
 set tags=./tags,tags;$HOME
-" set autochdir
-" 
 
 highlight CursorLine cterm=bold ctermbg=236 guibg=#333344
-
-" set iskeyword-=_
 
 " Fold config
 set foldmethod=syntax
@@ -171,32 +93,22 @@ set foldlevel=99
 
 colorscheme molokai
 set termguicolors
-"let ayucolor="dark"
 let g:rehash256 = 1
 hi Normal guibg=#000000 ctermbg=NONE
-
-" Move between windows bindings
-"nnoremap <c-j> <c-w>j
-"nnoremap <c-k> <c-w>k
-"nnoremap <c-h> <c-w>h
-"nnoremap <c-l> <c-w>l
-
-let g:LanguageClient_serverCommands = {
-    \ 'c': ['ccls', '--log-file=/tmp/cc.log'],
-    \ 'cpp': ['ccls', '--log-file=/tmp/cc.log'],
-    \ 'cuda': ['ccls', '--log-file=/tmp/cc.log'],
-    \ 'objc': ['ccls', '--log-file=/tmp/cc.log'],
-    \ }
-
-let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
-let g:LanguageClient_settingsPath = '/home/YOUR_USERNAME/.config/nvim/settings.json'
-" https://github.com/autozimu/LanguageClient-neovim/issues/379 LSP snippet is not supported
-"let g:LanguageClient_hasSnippetSupport = 0
 
 " NERDTree
 nmap <c-t> :NERDTreeToggle<cr>
 
-let mapleader = ","
+" Switch directly to tab pages with Space + 1..9
+nnoremap <space>1 1gt
+nnoremap <space>2 2gt
+nnoremap <space>3 3gt
+nnoremap <space>4 4gt
+nnoremap <space>5 5gt
+nnoremap <space>6 6gt
+nnoremap <space>7 7gt
+nnoremap <space>8 8gt
+nnoremap <space>9 9gt
 
 " Vista
 let g:vista#renderer#enable_icon = 1 
@@ -209,17 +121,13 @@ nmap <leader>v :Vista toggle<cr>
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>
 
-"Ctrl P
-"nnoremap <space>b :CtrlPBuffer<cr>
-"let g:ctrlp_cmd = 'CtrlPBuffer'
-
 " fzf config
 nnoremap <space>f :Files <Cr>
 nnoremap <space>b :Buffers <Cr>
 nnoremap <space>m :Marks <Cr>
 nnoremap <space>l :BLines <Cr>
 
-nnoremap <space>h :ClangdSwitchSourceHeader<cr>
+nnoremap <silent><space>h :CocCommand clangd.switchSourceHeader<cr>
 
 " Floaterm config
 nnoremap <silent> <C-n> :FloatermToggle<CR>
@@ -231,10 +139,7 @@ let g:cmake_link_compile_commands = 1
 nmap <leader>cg :CMakeGenerate<cr>
 nmap <leader>cb :CMakeBuild<cr>
 
-"Coc config
-"hi CocFloating ctermbg=White
-
-
+" CoC config
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
 "set encoding=utf8
@@ -637,8 +542,20 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 
 autocmd User CocStatusChange redrawstatus
 
+" Airline statusline
 let g:airline_powerline_fonts = 1
 let g:airline_context_mode = 'function'
+let g:airline_section_warning=''
+let g:airline_section_error=''
+let g:airline_section_a=''
+let g:airline_section_b=''
+let g:airline_section_x=''
+let g:airline_section_y=''
+let g:airline_section_z=''
+let g:airline_detect_whitespace=0
+let g:airline#extensions#hunks#enabled = 0
+let g:airline#extensions#searchcount#enabled = 0
+let g:airline#extensions#default#section_truncate_width = {}
 
 function! AirlineStatusContext(symbol, name) abort
   if g:airline_context_mode ==# 'filename' || empty(a:symbol)
@@ -827,46 +744,17 @@ autocmd User CocListMoved call RefreshCocPreviewStatusline()
 nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-" nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-" nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-"Syntastic
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-"
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 0
-"let g:syntastic_check_on_wq = 0
-"let g:syntastic_aggregate_errors = 1
-"let g:syntastic_cpp_checkers = ['gcc']
-" let g:syntastic_cpp_checkers = ['gcc', 'cppcheck', 'clang_tidy']
-
-" BufferLine
-" In your init.lua or init.vim
-set termguicolors
-
+" NERDCommenter
 let g:NERDCreateDefaultMappings = 1
 
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
-" Use compact syntax for prettified multi-line comments
-" let g:NERDCompactSexyComs = 1
-
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
-
-" Set a language to use its alternate delimiters by default
-" let g:NERDAltDelims_java = 1
-
-" Add your own custom formats or override the defaults
-" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
 
 " Allow commenting and inverting empty lines (useful when commenting a region)
 let g:NERDCommentEmptyLines = 1
@@ -879,46 +767,18 @@ let g:NERDToggleCheckAllLines = 1
 
 hi MatchParenCur ctermbg=red
 hi MatchParen ctermbg=lightblue
-"hi MatchWordCur cterm=underline
-"
 
-se mouse=
+set mouse=
 
 " QuickScope
 " Trigger a highlight in the appropriate direction when pressing these keys:
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
-"nmap <S-j> <Plug>MoveLineDown
-"nmap <S-k> <Plug>MoveLineUp
-"vmap <S-j> <Plug>MoveBlockDown
-"vmap <S-k> <Plug>MoveBlockUp
-
-"map <silent>L <Plug>LineLetters
-
-"map <C-a> <ESC>^
-"imap <C-a> <ESC>I
-"map <C-e> <ESC>$
-"imap <C-e> <ESC>A
-
-nnoremap <c-h> :BufferLineCycleNext<CR>
-nnoremap <c-l> :BufferLineCyclePrev<CR>
-
-let g:airline_section_warning=''
-let g:airline_section_error=''
-let g:airline_section_a=''
-let g:airline_section_b=''
-let g:airline_section_x=''
-let g:airline_section_y=''
-let g:airline_section_z=''
-let g:airline_detect_whitespace=0
-let g:airline#extensions#hunks#enabled = 0
-let g:airline#extensions#searchcount#enabled = 0
-let g:airline#extensions#default#section_truncate_width = {}
-
+" Editing shortcuts
 inoremap <C-j> {}<Left>
 inoremap <C-k> []<Left>
 inoremap <C-l> ()<Left>
-inoremap <C-e> =<space>
+inoremap <C-e> =
 
 nnoremap <C-u> %
 vnoremap <C-u> %
@@ -926,7 +786,3 @@ vnoremap <C-u> %
 " Mappings for CoCList
 " Show all diagnostics.
 nnoremap <silent><nowait> <space>d  :<C-u>CocList diagnostics<cr>
-" Manage extensions.
-"nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-" Show commands.
-"nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
