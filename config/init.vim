@@ -91,7 +91,7 @@ set foldmethod=syntax
 set nofoldenable
 set foldlevel=99
 
-colorscheme molokai
+silent! colorscheme molokai
 set termguicolors
 let g:rehash256 = 1
 hi Normal guibg=#000000 ctermbg=NONE
@@ -423,38 +423,12 @@ nmap <silent> gX :call <SID>CocReferencesPlus()<CR>
 " Coc call hierarchy: shows references grouped by caller function
 nmap <silent> gR :call CocAction('showIncomingCalls')<CR>
 
-
-
-" bases
-nn <silent> zb :call CocLocations('ccls','$ccls/inheritance')<cr>
-" bases of up to 3 levels
-nn <silent> zB :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
-" derived
-nn <silent> zd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
-" derived of up to 3 levels
-nn <silent> zD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
-
 " caller
 nn <silent> zc :call CocAction('showIncomingCalls')<cr>
 " callee
 nn <silent> zC :call CocAction('showOutgoingCalls')<cr>
 
-" $ccls/member
-" member variables / variables in a namespace
-nn <silent> zm :call CocLocations('ccls','$ccls/member')<cr>
-" member functions / functions in a namespace
-nn <silent> zf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
-" nested classes / types in a namespace
-nn <silent> zs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
-
 nmap <silent> zt <Plug>(coc-type-definition)<cr>
-nn <silent> zv :call CocLocations('ccls','$ccls/vars')<cr>
-nn <silent> zV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
-
-nn <silent> zj :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})<cr>
-nn <silent> zh :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})<cr>
-nn <silent> zl :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>
-nn <silent> zk :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>
 
 " Use D to show documentation in preview window.
 nnoremap <silent> D :call <SID>show_documentation()<CR>
@@ -623,8 +597,10 @@ function! AirlineFileAndSymbol()
   return AirlineStatusContext(l:symbol, l:name)
 endfunction
 
-call airline#parts#define_function('file_and_symbol', 'AirlineFileAndSymbol')
-let g:airline_section_c = airline#section#create(['file_and_symbol'])
+if !empty(globpath(&runtimepath, 'autoload/airline.vim'))
+  call airline#parts#define_function('file_and_symbol', 'AirlineFileAndSymbol')
+  let g:airline_section_c = airline#section#create(['file_and_symbol'])
+endif
 nnoremap <silent> <space>e :call ToggleAirlineContext()<CR>
 
 function! AirlineNearestCppSymbolInBuffer(bufnr, lnum) abort
@@ -734,7 +710,9 @@ function! AirlinePreviewSymbolStatusline(...) abort
     return 1
   endif
 endfunction
-call airline#add_inactive_statusline_func('AirlinePreviewSymbolStatusline')
+if !empty(globpath(&runtimepath, 'autoload/airline.vim'))
+  call airline#add_inactive_statusline_func('AirlinePreviewSymbolStatusline')
+endif
 
 autocmd VimEnter * silent! call vista#RunForNearestMethodOrFunction()
 autocmd CursorHold,CursorHoldI,CursorMoved,BufEnter * redrawstatus

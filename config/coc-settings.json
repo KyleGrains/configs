@@ -1,0 +1,11 @@
+{
+  "clangd.arguments": [
+    "--background-index"
+  ],
+  "callHierarchy.splitCommand": "botright 12split",
+  "callHierarchy.openCommand": "pedit",
+  "tree.key.invoke": "o",
+  "tree.key.toggle": "<cr>",
+  "coc.preferences.currentFunctionSymbolAutoUpdate": true,
+  "coc.preferences.currentFunctionSymbolDebounceTime": 120
+}
