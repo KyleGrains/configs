@@ -129,6 +129,10 @@ nnoremap <space>l :BLines <Cr>
 
 nnoremap <silent><space>h :CocCommand clangd.switchSourceHeader<cr>
 
+" Jump between Git diff hunks
+nmap <silent> <space>k <Plug>(GitGutterPrevHunk)
+nmap <silent> <space>j <Plug>(GitGutterNextHunk)
+
 " Floaterm config
 nnoremap <silent> <C-n> :FloatermToggle<CR>
 tnoremap <silent> <C-n> <C-\><C-n>:FloatermToggle<CR>
