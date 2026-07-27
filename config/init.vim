@@ -39,6 +39,9 @@ Plug 'antoinemadec/FixCursorHold.nvim'
 " Floating terminal
 Plug 'voldikss/vim-floaterm'
 
+" AI CLI integration (Codex, Claude Code, and others)
+Plug 'folke/sidekick.nvim'
+
 " C++ syntax highlighting
 Plug 'octol/vim-cpp-enhanced-highlight'
 
@@ -59,6 +62,33 @@ Plug 'unblevable/quick-scope'
 
 Plug 'christoomey/vim-tmux-navigator'
 call plug#end()
+
+lua << EOF
+local ok, sidekick = pcall(require, "sidekick")
+if ok then
+  sidekick.setup({
+    nes = { enabled = false },
+    copilot = { status = { enabled = false } },
+    cli = {
+      win = {
+        layout = "float",
+        keys = {
+          hide_ctrl_dot = false,
+          hide_ctrl_z = false,
+          hide_ctrl_n = false,
+          hide_ctrl_x = { "<c-x>", "hide", mode = { "n", "t" } },
+        },
+      },
+      mux = { enabled = false },
+      tools = {
+        -- Do not offer already-running tmux sessions in the picker.
+        codex = { is_proc = function() return false end },
+        claude = { is_proc = function() return false end },
+      },
+    },
+  })
+end
+EOF
 
 let g:loaded_matchit = 1
 
@@ -132,10 +162,15 @@ nnoremap <silent><space>h :CocCommand clangd.switchSourceHeader<cr>
 " Jump between Git diff hunks
 nmap <silent> <space>k <Plug>(GitGutterPrevHunk)
 nmap <silent> <space>j <Plug>(GitGutterNextHunk)
+nmap <silent> <space>c <Plug>(GitGutterPreviewHunk)
 
-" Floaterm config
+" Terminal toggles
 nnoremap <silent> <C-n> :FloatermToggle<CR>
-tnoremap <silent> <C-n> <C-\><C-n>:FloatermToggle<CR>
+tnoremap <silent><expr> <C-n> &filetype ==# 'floaterm' ? "\<C-\>\<C-n>:FloatermToggle\<CR>" : "\<C-n>"
+nnoremap <silent> <C-x> :Sidekick cli toggle<CR>
+
+" Toggle the active AI CLI; use Space+A to choose or start another one.
+nnoremap <silent> <space>a :Sidekick cli select<CR>
 
 " vim-cmake config
 " set CMAKE_EXPORT_COMPILE_COMMANDS
