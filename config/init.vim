@@ -819,3 +819,13 @@ function! ToggleWindowZoom()
 endfunction
 
 nnoremap <silent> <space>z :call ToggleWindowZoom()<CR>
+
+" Show open buffers across the top
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+set showtabline=2
+
+" Move through displayed buffers
+nnoremap <silent> <space>w :bnext<CR>
+nnoremap <silent> <space>q :bprevious<CR>
