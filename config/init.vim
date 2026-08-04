@@ -27,6 +27,8 @@ Plug 'tpope/vim-surround'
 
 " Git
 Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+
 
 " Fuzzy finder
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -803,3 +805,17 @@ vnoremap <C-u> %
 " Mappings for CoCList
 " Show all diagnostics.
 nnoremap <silent><nowait> <space>d  :<C-u>CocList diagnostics<cr>
+
+
+function! ToggleWindowZoom()
+    if exists('t:zoom_restore')
+        execute t:zoom_restore
+        unlet t:zoom_restore
+    else
+        let t:zoom_restore = winrestcmd()
+        wincmd _
+        wincmd |
+    endif
+endfunction
+
+nnoremap <silent> <space>z :call ToggleWindowZoom()<CR>
