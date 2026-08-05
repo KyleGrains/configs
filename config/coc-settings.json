@@ -1,6 +1,7 @@
 {
   "clangd.arguments": [
-    "--background-index"
+    "--background-index",
+    "--query-driver=/usr/bin/c++"
   ],
   "callHierarchy.splitCommand": "botright 12split",
   "callHierarchy.openCommand": "pedit",

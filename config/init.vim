@@ -150,8 +150,8 @@ let g:vista_finder_alternative_executives = 'ctags'
 nmap <leader>v :Vista toggle<cr>
 
 " Save on Ctrl-S
-nmap <c-s> :w<CR>
-imap <c-s> <Esc>:w<CR>
+nmap <c-s> :wa<CR>
+imap <c-s> <Esc>:wa<CR>
 
 " fzf config
 nnoremap <space>f :Files <Cr>
@@ -488,7 +488,21 @@ endfunction
 "autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
+" nmap <leader>rn <Plug>(coc-rename)
+
+function! s:RenameCallback(err, result) abort
+	if empty(a:err)
+		silent wa
+	endif
+endfunction
+
+function! s:RenameAndWrite() abort
+	call CocActionAsync('rename', function('s:RenameCallback'))
+endfunction
+
+
+nnoremap <silent> <leader>rn :call <SID>RenameAndWrite()<CR>
+
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
