@@ -812,6 +812,7 @@ inoremap <C-j> {}<Left>
 inoremap <C-k> []<Left>
 inoremap <C-l> ()<Left>
 inoremap <C-e> =
+inoremap <C-d> -
 
 nnoremap <C-u> %
 vnoremap <C-u> %
