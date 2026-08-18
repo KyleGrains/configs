@@ -171,6 +171,9 @@ nnoremap <silent> <C-n> :FloatermToggle<CR>
 tnoremap <silent><expr> <C-n> &filetype ==# 'floaterm' ? "\<C-\>\<C-n>:FloatermToggle\<CR>" : "\<C-n>"
 nnoremap <silent> <C-x> :Sidekick cli toggle<CR>
 
+let g:floaterm_width = 0.9
+let g:floaterm_height = 0.9
+
 " Toggle the active AI CLI; use Space+A to choose or start another one.
 nnoremap <silent> <space>a :Sidekick cli select<CR>
 
