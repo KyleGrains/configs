@@ -9,6 +9,7 @@ Plug 'tomasr/molokai'
 
 " NERDTree
 Plug 'preservim/nerdtree'
+Plug 'ryanoasis/vim-devicons'
 
 " CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
