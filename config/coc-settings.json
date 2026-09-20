@@ -9,4 +9,5 @@
   "tree.key.toggle": "<cr>",
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.currentFunctionSymbolDebounceTime": 120
+  "semanticTokens.enable": true
 }

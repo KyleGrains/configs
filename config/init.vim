@@ -848,3 +848,11 @@ set showtabline=2
 " Move through displayed buffers
 nnoremap <silent> <space>w :bnext<CR>
 nnoremap <silent> <space>q :bprevious<CR>
+
+nnoremap <leader>gv :Gvdiffsplit<CR>
+"nnoremap <leader>gV :Gvdiffsplit HEAD<CR>
+nnoremap <leader>gV :Git difftool -y<CR>
+
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
