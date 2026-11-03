@@ -64,6 +64,8 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'unblevable/quick-scope'
 
 Plug 'christoomey/vim-tmux-navigator'
+
+Plug 'rhysd/vim-clang-format'
 call plug#end()
 
 lua << EOF
@@ -157,6 +159,7 @@ imap <c-s> <Esc>:wa<CR>
 " fzf config
 nnoremap <space>f :Files <Cr>
 nnoremap <space>b :Buffers <Cr>
+nnoremap <space>g :GFiles?<CR>
 nnoremap <space>m :Marks <Cr>
 nnoremap <space>l :BLines <Cr>
 
@@ -856,3 +859,8 @@ nnoremap <leader>gV :Git difftool -y<CR>
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
+
+let g:clang_format#detect_style_file = 1
+
+nnoremap <leader>cf :ClangFormat<CR>
+vnoremap <leader>cf :ClangFormat<CR>
